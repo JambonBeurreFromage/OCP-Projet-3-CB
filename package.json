@@ -1,0 +1,19 @@
+{
+  "name": "portfolio-architecte-sophie-bluel-master",
+  "version": "1.0.0",
+  "description": "OCR Projet 3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JambonBeurreFromage/OCP-Projet-3-CB.git"
+  },
+  "author": "CB",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JambonBeurreFromage/OCP-Projet-3-CB/issues"
+  },
+  "homepage": "https://github.com/JambonBeurreFromage/OCP-Projet-3-CB#readme"
+}

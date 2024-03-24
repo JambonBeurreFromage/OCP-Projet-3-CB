@@ -84,6 +84,29 @@ h2{
 	font-size: 30px;
 	color: #1D6154
 }
+
+.selectorMenu {
+	display: flex;
+	justify-content: center;
+}
+
+.selectorProject {
+	font-family: 'Syne';
+	font-weight: 700;
+	color: #1D6154;
+	margin : 2em 0.25em;
+	padding: 0.5em 1em;
+	text-align: center;
+	border:  solid 1px #1D6154;
+	border-radius: 60px;
+	cursor: pointer;
+}
+
+.selectorProject:hover {
+	color: white;
+	background-color: #1D6154;
+}
+
 nav ul {
 	display: flex;
 	align-items: center;
