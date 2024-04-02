@@ -102,9 +102,18 @@ h2{
 	cursor: pointer;
 }
 
-.selectorProject:hover {
+.selectorProject:hover,
+.selectorProjectSelect {
 	color: white;
 	background-color: #1D6154;
+	font-family: 'Syne';
+	font-weight: 700;
+	margin : 2em 0.25em;
+	padding: 0.5em 1em;
+	text-align: center;
+	border:  solid 1px #1D6154;
+	border-radius: 60px;
+	cursor: pointer;
 }
 
 nav ul {
