@@ -58,6 +58,23 @@ header {
 	justify-content: space-between;
 	margin: 50px 0
 }
+
+#admin{
+	width: 100%;
+	padding: 20px;
+	left: 0;
+	top: 0;
+	text-align: center;
+	background-color: black;
+	font-family: 'Work Sans' ;
+}
+
+#admin span {
+	margin: 10px;
+	font-size: 16px;
+	color: white;
+}
+
 section {
 	margin: 50px 0
 }
@@ -127,6 +144,15 @@ nav li {
 	font-size: 1.2em;
 }
 
+nav a {
+	text-decoration: none;
+	color: inherit;
+}
+
+#loginLink {
+	font-weight: bold;
+}
+
 li:hover {
 	color: #B1663C;
 }
@@ -153,10 +179,24 @@ li:hover {
 #introduction p {
 	margin-bottom: 0.5em;
 }
+
+#portFolioTitle {
+	display: flex;
+    justify-content: center;
+}
+
 #portfolio h2 {
 	text-align: center;
 	margin-bottom: 1em;
 }
+
+#modifPortfolio {
+	position: absolute;
+	cursor: pointer;
+	margin-left: 300px;
+    margin-top: 10px;
+}
+
 .gallery {
 	width: 100%;
 	display: grid;
@@ -169,39 +209,136 @@ li:hover {
 	width: 100%;
 
 }
-#contact {
-	width: 50%;
-margin: auto;
-}
-#contact > * {
-	text-align: center;
 
+.modalHidden {
+	display: none;
 }
-#contact h2{
+
+.modalTrue {
+	position: fixed;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.closeBtn {
+	position: relative;
+	left: 560px;
+}
+
+.closeBtn span,
+.backBtn span {
+	visibility: hidden;
+}
+
+.modalWrapper {
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: 600px;
+	max-width: calc(100vw - 30px);
+	max-height: calc(100vh - 30px);
+	padding: 60px;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+}
+
+.modalProjects {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	border-bottom: solid 1px;
+}
+
+.modalWrapper img {
+	width: 100px;
+	height: auto;
+	margin-bottom: 2em;
+	object-fit: cover
+}
+
+.trashBtn {
+	position: relative;
+    left: 95px;
+    bottom: 140px;
+	background-color: black;
+	color: white;
+	border: solid 2px black;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.modalHidden button {
+	border: none;
+	width: 200px;
+	padding: 0.5em 1em;
+}
+
+
+#contact,
+#login {
+	width: 50%;
+	margin: auto;
+}
+
+#login{
+	margin: 20% auto;
+}
+
+#contact > *,
+#login > *,
+#login a {
+	text-align: center;
+	color: inherit;
+}
+
+.logStatut{
+	display: none;
+}
+
+#messageError {
+	text-align: center;
+	color: red;
+	font-size: large;
+	margin: 20px;
+}
+
+#contact h2,
+#login h2{
 	margin-bottom: 20px;
 }
-#contact form {
+#contact form,
+#login form {
 	text-align: left;
 	margin-top:30px;
 	display: flex;
 	flex-direction: column;
 }
 
-#contact input {
+#contact input,
+#login input {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
-#contact label {
+#contact label,
+#login label {
 	margin: 2em 0 1em 0;
 }
 #contact textarea {
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	resize: none;
 }
 
-input[type="submit"]{
+input[type="submit"],
+button {
 	font-family: 'Syne';
 	font-weight: 700;
 	color: white;
@@ -210,6 +347,7 @@ input[type="submit"]{
 	width: 180px;
 	text-align: center;
 	border-radius: 60px ;
+	cursor: pointer;
 }
 
 footer nav ul {

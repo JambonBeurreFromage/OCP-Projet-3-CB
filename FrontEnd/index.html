@@ -7,6 +7,9 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+	integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+	crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
 	<script src="./assets/script.js" defer></script>
@@ -16,12 +19,14 @@
 	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
 		<ul>
-			<li>projets</li>
-			<li>contact</li>
-			<li>login</li>
-			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+			<li ><a tabindex="1" href="#portfolio">projets</a></li>
+			<li ><a tabindex="1" href="#contact">contact</a></li>
+			<li id="loginBtn" aria-hidden="false"><a tabindex="1" href="./login.html">login</a></li>
+			<li id="logoutBtn" class="logStatut" aria-hidden="true"><a tabindex="1" href="./login.html">logout</a></li>
+			<li ><img tabindex="1" src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
+
 </header>
 <main>
 	<section id="introduction">
@@ -36,17 +41,35 @@
 		</article>
 	</section>
 	<section id="portfolio">
-		<h2>Mes Projets</h2>
+		<div id="portFolioTitle">
+			<h2>Mes Projets</h2>
+		</div>
+
 		<div class="selectorMenu">
-			<span class="selectorProject" id="selectorAll">Tous</span>
-			<span class="selectorProject" id="selectorObject">Objets</span>
-			<span class="selectorProject" id="selectorFlat">Appartements</span>
-			<span class="selectorProject" id="selectorHotel">Hôtels & Restaurants</span>
 		</div>
 
 		<div class="gallery">
 		</div>
 
+		<aside id="modal1" class="modalHidden" aria-hidden="true" role="dialog" aria-modal="false">
+			<div class="modalWrapper">
+				<span class="closeBtn"><i class="fa-solid fa-xmark fa-xl" ></i><span>Fermer</span></span>
+				<h2>Galerie photo</h2>
+				<div class="modalProjects"></div>
+				<button>Ajouter une photo</button>
+			</div>
+		</aside>
+
+		<aside id="modal2" class="modalHidden" aria-hidden="true" role="dialog" aria-modal="false">
+			<div class="modalWrapper">
+				<div>
+					<span class="backBtn"><i class="fa-solid fa-arrow-left fa-xl"></i><span>Retour</span></span>
+					<span class="closeBtn"><i class="fa-solid fa-xmark fa-xl"></i><span>Fermer</span></span>
+				</div>
+				<h2>Ajout photo</h2>
+				<div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque, molestiae.</div>
+			</div>
+		</aside>
 		
 	</section>
 	<section id="contact">
