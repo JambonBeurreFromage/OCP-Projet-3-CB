@@ -51,23 +51,47 @@
 		<div class="gallery">
 		</div>
 
-		<aside id="modal1" class="modalHidden" aria-hidden="true" role="dialog" aria-modal="false">
+		<aside id="modal1" class="modalHidden" aria-hidden="true" aria-modal="false" aria-labelledby="titleModal1">
 			<div class="modalWrapper">
-				<span class="closeBtn"><i class="fa-solid fa-xmark fa-xl" ></i><span>Fermer</span></span>
-				<h2>Galerie photo</h2>
+				<div class="bandModalWrapper">
+					<span class="closeBtn" tabindex="3"><i class="fa-solid fa-xmark fa-xl" ></i><span>Fermer</span></span>
+				</div>
+				<h2 id="titleModal1">Galerie photo</h2>
 				<div class="modalProjects"></div>
-				<button>Ajouter une photo</button>
+				<button class="changeBtn jsChangeBtn" tabindex="3">Ajouter une photo</button>
 			</div>
 		</aside>
 
-		<aside id="modal2" class="modalHidden" aria-hidden="true" role="dialog" aria-modal="false">
+		<aside id="modal2" class="modalHidden" aria-hidden="true" aria-modal="false" aria-labelledby="titleModal2">
 			<div class="modalWrapper">
-				<div>
-					<span class="backBtn"><i class="fa-solid fa-arrow-left fa-xl"></i><span>Retour</span></span>
-					<span class="closeBtn"><i class="fa-solid fa-xmark fa-xl"></i><span>Fermer</span></span>
+				<div class="bandModalWrapper">
+					<span class="closeBtn" role="button" tabindex="5"><i class="fa-solid fa-xmark fa-xl"></i><span>Fermer</span></span>
+					<span class="backBtn jsChangeBtn" role="button" tabindex="4"><i class="fa-solid fa-arrow-left fa-xl"></i><span>Retour</span></span>
 				</div>
-				<h2>Ajout photo</h2>
-				<div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque, molestiae.</div>
+
+				<div class="uploadForm">
+					<h2 id="titleModal2">Ajout photo</h2>
+					<form action="#" method="post">
+							<div id="imgUpload">
+								<i class="fa-regular fa-image fa-6x"></i>
+								<button tabindex="5">+ Ajouter photo<input type="file" name="imgUpload" id="imgUploadInput" style="display: none;"></button>
+								<span>jpg, png : 4mo max</span>
+							</div>
+							<div class="uploadFormDiv">
+								<label for="title">Titre</label>
+								<input type="text" id="title" name="title" tabindex="5" required>
+							</div>
+							<div class="uploadFormDiv" id="selectForm">
+								<label for="category">Catégorie</label>
+								<select name="category" id="category" tabindex="5" required>
+									<option value=""></option>
+								</select>
+							</div>
+							<div>
+								<input type="submit" value="Valider" tabindex="5">
+							</div>
+					</form>
+				</div>
 			</div>
 		</aside>
 		
