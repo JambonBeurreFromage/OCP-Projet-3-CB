@@ -1,13 +1,14 @@
 //////////////////////////////Variables à portée globale//////////////////////////////
 //Selection des modales
+let modal = null;
 let modal1 = document.getElementById("modal1");
 let modal2 = document.getElementById("modal2");
+// let key = null;
 
 //Selecteurs et variables login page
 let modalProjects = document.querySelector(".modalProjects");
 let loginForm = document.querySelector(".loginForm");
 let userLog;
-let modalEventListeners = [];
 
 
 //////////////////////////////Fonctions divers //////////////////////////////
@@ -74,10 +75,11 @@ async function galleryUpdate() {
 
         
         //Créer les mignatures
-        let img = document.createElement("img");
+        let imgUpdate = document.createElement("img");
         modalProjects.appendChild(figure);
-        img.src = showAllProjects[i].imageUrl;
-        figure.appendChild(img);
+        imgUpdate.classList.add("imgGalleryUpdate");
+        imgUpdate.src = showAllProjects[i].imageUrl;
+        figure.appendChild(imgUpdate);
 
         //Supprime les travaux aux clics
         trashBtn.addEventListener("click", async () => {
@@ -122,102 +124,260 @@ async function galleryUpdate() {
 };
 
 //Fonction pour stroper la propagation aux enfants
-function stopPropagation(e) {
+let stopPropagation = (e) => {
     e.stopPropagation();
 };
 
-function uploadImg() {
-    let imgUploadContainer = document.querySelector("#imgUpload button");
-    
-    imgUploadContainer.addEventListener("click", () => {
-        console.log("click")
-    });
+////// Permet de prévisuliser l'image
+let preview = (e) => {
+    // e.files contient un objet FileList
+    let imgContain = document.getElementById("imgUpload")
+    const [picture] = e.files;
+    console.log("test2")
+
+    //Création de la mignature
+    let figure = document.createElement("figure");
+    figure.classList.add("jsLoadFigure");
+    imgContain.appendChild(figure);
+    let imgLoad = document.createElement("img");
+    imgLoad.classList.add("jsLoadImg");
+    figure.appendChild(imgLoad);
+
+    // picture est un objet File
+    if (picture) {
+        // change l'URL de l'image
+        imgLoad.src = URL.createObjectURL(picture)
+    };    
 };
 
-// // Fonction pour supprimer tous les écouteurs d'événements associés à une modal spécifique
-// function removeModalEventListeners(modal) {
-//     modalEventListeners.forEach(listener => {
-//         if (listener.modal === modal) {
-//             modal.removeEventListener(listener.eventType, listener.callback);
-//         }
-//     });
-//     // Filtre les écouteurs d'événements restants pour supprimer ceux associés à la modal
-//     modalEventListeners = modalEventListeners.filter(listener => listener.modal !== modal);
-// };
+//Change la classe du button d'envoi
+let changeClass = (e) => {
+    let uplaodBtn = document.querySelector("#idUploadBtn");
+    e.preventDefault();
 
-// // Fonction pour ajouter un écouteur d'événement à une modal spécifique
-// function addModalEventListener(modal, eventType, callback) {
-//     modal.addEventListener(eventType, callback);
-//     // Stocke la référence de l'écouteur d'événement ajouté
-//     modalEventListeners.push({ modal: modal, eventType: eventType, callback: callback });
-// };
+    if (document.querySelector("#imgUpload input").value != ""
+        && document.getElementById("title").value != ""
+        && document.getElementById("category").value != ""
+    ) {
+        try{
+            uplaodBtn.classList.remove("uploadBtn");
+            uplaodBtn.classList.add("uploadBtnReady");
+            console.log("click")
+        } catch (error) {
+            console.log(error);
+        };
+    } else {
+        try {
+            uplaodBtn.classList.add("uploadBtn");
+            uplaodBtn.classList.remove("uploadBtnReady");
+        } catch (error) {
+            console.log(error);
+        };
+    };
+};
 
-// // Fonction pour ajouter les écouteurs d'événements à une modal
-// function addEventListeners(modal) {
-//     // Permet de fermer la modal au clic n'importe où
-//     modal.addEventListener("click", () => {
-//         closeModal(modal);
-//     });
+//Met en forme le conteneur de l'image prévisualisée
+let addImgView = () => {
+    let fileImg = document.querySelector("#imgUpload input");
+    let imgContainElement = document.querySelectorAll(".jsLoadImgContain");
 
-//     // Permet de stoper la propagation de la foncton closeModal lorsqu'on clic sur la div modalWrapper
-//     let modalWrapper = document.querySelectorAll(".modalWrapper");
-//     modalWrapper.forEach(modal => {
-//         modal.addEventListener('click', stopPropagation);
-//     });
+    console.log("test")
+    imgContainElement.forEach(element => {
+        element.classList.add("jsLoadImgContainHidden");
+    });
 
-//     // Permet de lancer closeModal au clic ou à l'appui sur Enter sur chacun des icônes croix
-//     let closeModalBtn = document.querySelectorAll(".closeBtn");
-//     closeModalBtn.forEach(btn1 => {
-//         addModalEventListener(btn1, "click", () => {
-//             closeModal(modal);
-//         });
+    preview(fileImg);
+};
 
-//         addModalEventListener(btn1, "keydown", (event) => {
-//             if (event.key === "Enter") {
-//                 closeModal(modal);
-//             };
-//         });
-//     });
+let submitFormImg = async (e) => {
+    e.preventDefault();
+    
+    //message d'erreur en cas de mauvaise soumission du formualire
+    let messageError = document.getElementById("messageError");   
+    //Supprime le message d'erreur précédent en cas de nouvelle tentative échouée
+    if (messageError) {
+        messageError.remove();
+    };
 
-//     // Permet de changer de modal au clic sur le bouton ajouter ou au clic sur back
-//     let changeModalBtn = document.querySelectorAll(".jsChangeBtn")
-//     changeModalBtn.forEach(btn2 => {
-//         addModalEventListener(btn2, "click", () => {
-//             changeModal(modal);
-//         });
+    if (document.querySelector("#imgUpload input").value != ""
+    && document.getElementById("title").value != ""
+    && document.getElementById("category").value != ""
+    ) { 
+            // Récupérer les données du formulaire
+            const title = document.getElementById("title").value;
+            const category = document.getElementById("category").value;
+            const fileInput = document.querySelector("#imgUpload input");
 
-//         addModalEventListener(btn2, "keydown", (event) => {
-//             if (event.key === "Enter") {
-//                 changeModal(modal);
-//             };
-//         });
-//     });
+            // Créer un objet FormData
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("category", category);
+            formData.append("image", fileInput.files[0]);
 
-//     // Permet de fermer la modal lors de l'utilisation de la touche escape
-//     addModalEventListener(window, "keydown", (event) => {
-//         if (event.key === "Escape" || event.key === "Esc") {
-//             closeModal(modal);
-//         };
-//     });
-// };
+            // Envoyer une requête POST à l'API pour ajouter l'élément
+            const localToken = localStorage.getItem("token");
+            try {
+                const response = await fetch("http://localhost:5678/api/works/", {
+                    method: "POST",
+                    headers:{
+                                "Authorization": `Bearer ${localToken}`,
+                                "Content-Type": "application/json"
+                            },
+                    body: formData,
+                });
+                
+                // Vérifier si la requête a réussi
+                if (response.ok) {
+                    console.log("Image ajoutée avec succès !");
+                } else {
+                    console.error("Erreur lors de l'ajout de l'image :", response.statusText);
+                }
+            } catch (error) {
+                console.error("Erreur lors de la requête POST :", error);
+            }
+        }
+        // // Récupération de limage
+        // let imgCharge = document.querySelector("#imgUpload input")
+        // const [pictureLoad] = imgCharge.files;
+        // console.log(pictureLoad)
+
+        // //Création de la charge utile
+        // const uplaodElement = {
+        // image: pictureLoad,
+        // title: document.getElementById("title").value,
+        // category: document.getElementById("category").value,
+        // };
+        // console.log(uplaodElement)
+
+
+        // //Création de la charge utile format JSON
+        // const chargeUplaodElement = JSON.stringify(uplaodElement)
+        // console.log(chargeUplaodElement)
+
+        // const localToken = localStorage.getItem("token");
+        // //Envoyer une requête POST à l'API pour ajouter l'élément
+        // await fetch("http://localhost:5678/api/works/", {
+        //     method: "POST",
+        //     headers:{
+        //                 "Authorization": `Bearer ${localToken}`,
+        //                 "Content-Type": "application/json"
+        //             },
+        //     body: chargeUplaodElement,
+        // });
+    else {
+        console.warn("error")
+
+        //affiche le message d'erreur sur la page de connexion
+        messageError = document.createElement("span");
+        messageError.setAttribute("id", "messageError")
+        messageError.innerHTML = "Merci de compléter le formulaire correctement"
+        document.getElementById("divUplaodAlert").appendChild(messageError)
+    };
+
+    // Supprimer l'élément HTML de la galerie après avoir supprimé l'élément dans l'API
+    // figure.remove();
+};
+
+async function uploadImg() {
+    
+    //Listeners sur le changement d'état des l'input d'ajout des images
+    document.querySelector("#imgUpload input").addEventListener("change", addImgView);
+    document.querySelector("#imgUpload input").addEventListener("change", changeClass);
+    document.querySelector("#title").addEventListener("change", changeClass)
+    document.querySelector("#category").addEventListener("change", changeClass)
+
+    //Ajoute la liste de catégories au formulaire
+    const allProjects = await fetch("http://localhost:5678/api/works/");
+    const showAllProjects = await allProjects.json();
+    const filterSetCatergory = new Set();
+    let selectCategory = document.getElementById("category");
+    
+    for (let i = 0; i < showAllProjects.length; i++) {
+        filterSetCatergory.add(showAllProjects[i].category.name);
+    };
+    
+    //Création du HTML pour chaque item du Set
+    for (let item of filterSetCatergory) {
+        let option = document.createElement("option");
+        option.innerText = item;
+        selectCategory.appendChild(option);
+    };
+
+    //Vérifie que les champs du formulaire sont complété pour passer le bouton en validation 
+    let uplaodImgBtn = document.querySelector("#idUploadBtn");
+
+    //Ajout de listener et validation du formulaire
+    uplaodImgBtn.addEventListener("click", submitFormImg);
+};
 
 //Fonction de fermeture de la modal
-function closeModal(e) {
-    modalProjects.innerHTML = "";
-    if (e.classList === "modalTrue") return;
-    e.classList.remove("modalTrue");
-    e.classList.add("modalHidden");
-    e.setAttribute("aria-hidden", "true");
-    e.setAttribute("aria-modal", "false");
+let closeModal = () => {
 
-    // removeModalEventListeners(e);
+    console.log("close modal")
+    modalProjects.innerHTML = "";
+
+
+    //Change les propriété HTML de la fenêtre modale
+    // if (modal.classList === "modalTrue") return;
+    modal.classList.remove("modalTrue");
+    modal.classList.add("modalHidden");
+    modal.setAttribute("aria-hidden", "true");
+    modal.setAttribute("aria-modal", "false");
+
+
+    modal.removeEventListener("click", closeModal);
+
+    if (modal === modal2) {
+        try {
+            //Supprime les projets éventuellement laissés sans validation dans la modal2
+            let imgLoad = document.querySelector("#imgUpload figure")
+
+            if (imgLoad != null) {
+                imgLoad.innerHTML = ""
+                document.getElementById("imgUpload").removeChild(document.querySelector("#imgUpload figure"));
+            };
+
+            //Assure que le formulaire se vide à la fermeture
+            document.getElementById("category").innerHTML = "<option></option>";
+            document.getElementById("title").value = ""
+            
+            //Supprime le message d'érreur dans la modal 2
+            let errorMessage = document.getElementById("divUplaodAlert");
+            errorMessage.innerHTML = "";
+
+            //Supprime les listener de la modal2
+            document.querySelector("#imgUpload input").removeEventListener("change", addImgView);
+            document.querySelector("#imgUpload input").removeEventListener("change", changeClass);
+            document.querySelector("#title").removeEventListener("change", changeClass)
+            document.querySelector("#category").removeEventListener("change", changeClass)
+            document.querySelector("#idUploadBtn").removeEventListener("click", submitFormImg);
+            document.querySelector("#idUploadBtn").classList.remove("uploadBtnReady");
+            document.getElementById("closeBtn2").removeEventListener("click", closeModal);
+            document.getElementById("wrapper2").removeEventListener('click', stopPropagation);
+            document.querySelector(".backBtn").removeEventListener("click", changeModal);
+        } catch (error) {
+            console.log(error);
+        };
+    
+    } else {
+        try {
+            //Supprime les listener de la modal1
+            document.getElementById("closeBtn1").removeEventListener("click", closeModal);
+            document.getElementById("wrapper1").removeEventListener('click', stopPropagation);
+            document.querySelector(".changeBtn").removeEventListener("click", changeModal);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    console.log("close modal finish")
 };
 
-//Fontion permettant de changer de modal, vérifie la modal en paramètre le ferme et charge l'autre
-function changeModal(e) {
-    closeModal(e);
-    console.log(e)
-    if (e === modal1) {
+//Fontion permettant de changer de modal, vérifie la modal chargée la ferme et charge l'autre
+let changeModal = () => {
+    console.log("change modal")
+    closeModal();
+    if (modal === modal1) {
         openModal(modal2);
     } else {
         openModal(modal1);
@@ -227,72 +387,61 @@ function changeModal(e) {
 //Fonction d'ouverture de la modal
 //Ici "e" correspond à la modal que l'on veut ouvrir et que l'on passe à la fonction closeModal
 function openModal(e) {
+    console.log("open modal")
+    console.log(e)
+    if (e === modal1) {
+        modal = modal1;
+        console.log("modal = modal 1")
+    } else {
+        modal = modal2;
+        console.log("modal = modal 2")
+        //Si modal2 est chargée, lancer la fonction d'upload
+        uploadImg(); 
+        //S'assurer que les éléments de imgContain ne soient pas caché.
+        document.querySelectorAll(".jsLoadImgContain").forEach(element => {
+            element.classList.remove("jsLoadImgContainHidden");
+        });
+    };
+
     //Change la classe pour afficher la modal
-    e.classList.add("modalTrue");
-    e.classList.remove("modalHidden");
+    modal.classList.add("modalTrue");
+    modal.classList.remove("modalHidden");
     //Change les attribues pour l'accessibilité
-    e.removeAttribute("aria-hidden");
-    e.setAttribute("aria-modal", "true");
+    modal.removeAttribute("aria-hidden");
+    modal.setAttribute("aria-modal", "true");
 
     //Lance la fonction permettant d'afficher la gallery de modification
     galleryUpdate();
 
-    // //Appel les event listeners
-    // removeModalEventListeners(e)
-    // addEventListeners(e)
-
-    //Si modal2 est chargée, lancer la fonction d'upload
-    if (e === modal2) {
-        uploadImg();
-    };
-
+    ////////////////////EventListeners////////////////////
     //Permet de fermer la modal au click n'importe où
-    e.addEventListener("click", () => {
-        closeModal(e);
-    });
+    modal.addEventListener("click", closeModal);
 
     //Permet de stoper la propagation de la foncton closeModal lorsqu'on clic sur la div modalWrapper
     let modalWrapper = document.querySelectorAll(".modalWrapper");
-    modalWrapper.forEach(modal => {
-        modal.addEventListener('click', stopPropagation);
+    modalWrapper.forEach(modalWindow => {
+        modalWindow.addEventListener('click', stopPropagation);
     });
 
     //Permet de lancer closeModal au click ou à l'appui sur enter sur chacun des icones croix
     let closeModalBtn = document.querySelectorAll(".closeBtn");
     closeModalBtn.forEach(btn1 => {
-        btn1.addEventListener("click", () => {
-            closeModal(e);
-        });
+        btn1.addEventListener("click", closeModal);
     });
 
-    closeModalBtn.forEach(btn1 => {
-        btn1.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                closeModal(e);
-            };
-        });
-    });
 
     //Permet de changer de modal au click sur le bouton ajouter ou au click sur back
     let changeModalBtn = document.querySelectorAll(".jsChangeBtn")
     changeModalBtn.forEach(btn2 => {
-        btn2.addEventListener("click", () => {
-            changeModal(e);
-        });
-
-        btn2.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                changeModal(e);
-            };
-        });
+        btn2.addEventListener("click", changeModal);
     });
 
-    //Permet de fermet la modal lors de l'utilisation de la trouche escape
+    //Permet de fermer la modal lors de l'utilisation de la trouche escape
     window.addEventListener("keydown", (event) => {
         if (event.key === "Escape" || event.key === "Esc") {
-            closeModal(e);
+            closeModal;
         };
-     });
+    });
 };
 
 //////////////////////////////Fonctions pour le login et les droits d'admins//////////////////////////////
@@ -414,12 +563,7 @@ try {
         const showAllProjects = await allProjects.json();
     
         let selectorMenu = document.querySelector(".selectorMenu");
-        let showSelectProject; //Permet de créer une liste de projet en fonction des filtres choisis
-        let spanBtnSelect; //Permet de dissocier les boutons des filtres
-        let spanBtn; // Permet de créer les boutons des filtres dans des spans
 
-    
-        
         //Création de la liste des boutons, récupération des élément dans allProjects.json "category.name"
         //le "Set" permet d'éviter les doublons
         const filterSet = new Set();
@@ -433,7 +577,7 @@ try {
         
         //Création du HTML pour chaque item du Set
         for (let item of filterSet) {
-            spanBtn = document.createElement("span");
+            let spanBtn = document.createElement("span");
             spanBtn.innerText = item;
             spanBtn.classList.add("selectorProject");
             spanBtn.setAttribute("id", item);
@@ -443,7 +587,7 @@ try {
         };
     
         //Atribuer le HTML créé au dessus à la variable spanBtnSelect
-        spanBtnSelect = document.querySelectorAll(".selectorProject");
+        let spanBtnSelect = document.querySelectorAll(".selectorProject");
         
         //Ajoute la class pour appliquer le CSS indicant la selection, "tous" étant l'affichage par defaut au chargement
         spanBtnSelect[0].classList.add("selectorProjectSelect");
@@ -453,7 +597,7 @@ try {
             //Pour gerer la selection du bouton au click
             spanBtnSelect[i].addEventListener("click", () => {
                 //Filtre la liste complète en ne prenant que les id 
-                showSelectProject = showAllProjects.filter((project) => project.categoryId === i);
+                let showSelectProject = showAllProjects.filter((project) => project.categoryId === i);
                 
                 //Enlève la classe "selectorProjectSelect" à tous les boutons avant de l'attribuer au bonton cliqué
                 spanBtnSelect.forEach(element => {

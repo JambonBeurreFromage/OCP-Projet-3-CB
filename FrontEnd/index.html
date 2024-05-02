@@ -52,9 +52,9 @@
 		</div>
 
 		<aside id="modal1" class="modalHidden" aria-hidden="true" aria-modal="false" aria-labelledby="titleModal1">
-			<div class="modalWrapper">
+			<div class="modalWrapper" id="wrapper1">
 				<div class="bandModalWrapper">
-					<span class="closeBtn" tabindex="3"><i class="fa-solid fa-xmark fa-xl" ></i><span>Fermer</span></span>
+					<span id="closeBtn1" class="closeBtn" tabindex="3"><i class="fa-solid fa-xmark fa-xl" ></i><span>Fermer</span></span>
 				</div>
 				<h2 id="titleModal1">Galerie photo</h2>
 				<div class="modalProjects"></div>
@@ -63,9 +63,9 @@
 		</aside>
 
 		<aside id="modal2" class="modalHidden" aria-hidden="true" aria-modal="false" aria-labelledby="titleModal2">
-			<div class="modalWrapper">
+			<div class="modalWrapper" id="wrapper2">
 				<div class="bandModalWrapper">
-					<span class="closeBtn" role="button" tabindex="5"><i class="fa-solid fa-xmark fa-xl"></i><span>Fermer</span></span>
+					<span id="closeBtn2" class="closeBtn" role="button" tabindex="5"><i class="fa-solid fa-xmark fa-xl"></i><span>Fermer</span></span>
 					<span class="backBtn jsChangeBtn" role="button" tabindex="4"><i class="fa-solid fa-arrow-left fa-xl"></i><span>Retour</span></span>
 				</div>
 
@@ -73,9 +73,10 @@
 					<h2 id="titleModal2">Ajout photo</h2>
 					<form action="#" method="post">
 							<div id="imgUpload">
-								<i class="fa-regular fa-image fa-6x"></i>
-								<button tabindex="5">+ Ajouter photo<input type="file" name="imgUpload" id="imgUploadInput" style="display: none;"></button>
-								<span>jpg, png : 4mo max</span>
+								<i class="fa-regular fa-image fa-6x jsLoadImgContain"></i>
+								<label for="imgUploadInput" tabindex="5" class="jsLoadImgContain">+ Ajouter photo</label>
+								<input type="file" name="imgUploadInput" id="imgUploadInput" accept=".jpg, .png, .gif" class="jsLoadImgContain" style="display: none;">
+								<span class="jsLoadImgContain">jpg, png : 4mo max</span>
 							</div>
 							<div class="uploadFormDiv">
 								<label for="title">Titre</label>
@@ -87,8 +88,9 @@
 									<option value=""></option>
 								</select>
 							</div>
-							<div>
-								<input type="submit" value="Valider" tabindex="5">
+							<div id="divUploadControl">
+								<input id="idUploadBtn" class="uploadBtn" type="submit" value="Valider" tabindex="5">
+								<div id="divUplaodAlert"></div>
 							</div>
 					</form>
 				</div>
@@ -99,7 +101,7 @@
 	<section id="contact">
 		<h2>Contact</h2>
 		<p>Vous avez un projet ? Discutons-en !</p>
-		<form action="#" method="post">
+		<form class="contact" action="#" method="post">
 			<label for="name">Nom</label>
 			<input type="text" name="name" id="name">
 			<label for="email">Email</label>

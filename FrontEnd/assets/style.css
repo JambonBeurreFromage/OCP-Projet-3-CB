@@ -212,10 +212,6 @@ li:hover {
 
 }
 
-.modalHidden {
-	display: none;
-}
-
 .modalTrue {
 	position: fixed;
 	display: flex;
@@ -241,11 +237,6 @@ li:hover {
 	align-items: center;
 }
 
-/* #modal1 .closeBtn {
-	display: flex;
-	width: 100%;
-	justify-content: flex-end;
-} */
 
 .bandModalWrapper{
 	display: flex;
@@ -255,7 +246,10 @@ li:hover {
 }
 
 .closeBtn span,
-.backBtn span {
+.backBtn span,
+.modalHidden,
+.logStatut,
+.jsLoadImgContainHidden {
 	display: none;
 }
 
@@ -266,7 +260,7 @@ li:hover {
 	border-bottom: solid 1px;
 }
 
-.modalWrapper img {
+.imgGalleryUpdate{
 	width: 100px;
 	height: auto;
 	margin-bottom: 2em;
@@ -294,18 +288,54 @@ li:hover {
 	align-items: center;
 }
 
-.uploadForm input[type="submit"] {
+.uploadBtn {
+	font-family: 'Syne';
+	font-weight: 700;
 	color: white;
 	background-color: #a7a7a7;
 	width: 300px;
+	margin : 2em auto ;
+	text-align: center;
+	border-radius: 60px ;
+	cursor: default;
+}
+
+.uploadBtnReady {
+	font-family: 'Syne';
+	font-weight: 700;
+	background-color: #1D6154;
+	color: white;
+	width: 300px;
+	margin : 2em auto ;
+	text-align: center;
+	border-radius: 60px ;
+	cursor: pointer;
+}
+
+#divUploadControl{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.jsLoadFigure {
+	display: contents;
+	height: 300px;
+}
+
+.jsLoadImg {
+	width: auto; 
+	height: 100%;
 }
 
 #imgUpload {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 400px;
-	padding: 1em;
+	justify-content: flex-end;
+	width: 500px;
+	height: 200px;
 	background-color: #e8f1f6;
 }
 
@@ -314,11 +344,20 @@ li:hover {
 	color: #c3d0d6;
 }
 
-#imgUpload button {
+#imgUpload label {
 	color: #306685;
 	background-color: #c3d0d6;
+	padding: 0.5em;
 	margin: 0.5em;
-	border: none;
+	width: 150px;
+	text-align: center;
+	font-weight: bold;
+	border-radius: 60px;
+	cursor: pointer;
+}
+
+#imgUpload span {
+	margin-bottom: 1em;
 }
 
 .uploadFormDiv {
@@ -367,10 +406,6 @@ li:hover {
 	color: inherit;
 }
 
-.logStatut{
-	display: none;
-}
-
 #messageError {
 	text-align: center;
 	color: red;
@@ -411,7 +446,7 @@ li:hover {
 	resize: none;
 }
 
-input[type="submit"] {
+.contact input[type="submit"] {
 	font-family: 'Syne';
 	font-weight: 700;
 	color: white;
