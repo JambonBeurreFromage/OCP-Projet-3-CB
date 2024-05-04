@@ -15,17 +15,31 @@ let userLog;
 //Fonction d'affichage du message d'erreur dans la zone de login
 function messageErreur(error) {
     console.warn(error)
-    let messageError = document.getElementById("messageError");
+    let messageErrorDiv = document.querySelector(".messageError");
 
     //Supprime le message d'erreur précédent en cas de nouvelle tentative échouée
-    if (messageError) {
-        messageError.remove();
+    if (messageErrorDiv) {
+        messageErrorDiv.remove();
     }
     //affiche le message d'erreur sur la page de connexion
-    messageError = document.createElement("span");
-    messageError.setAttribute("id", "messageError")
+    let messageError = document.createElement("span");
+    messageError.setAttribute("class", "messageError")
     messageError.innerHTML = error
     loginForm.appendChild(messageError)
+};
+
+function messageErreurModal(error) {
+    //Réinitialise la zone de message d'alerte
+    document.getElementById("divUplaodAlert").innerHTML = "";
+
+    //affiche le message de confirmation ou d'erreur sur la page d'ajout des travaux
+    let messageShow = document.createElement("span");
+
+    if (error === "Travaux ajoutés avec succès") { messageShow.setAttribute("id", "messageSucces") }
+    else { messageShow.setAttribute("class", "messageError"); };
+
+    messageShow.innerHTML = error
+    document.getElementById("divUplaodAlert").appendChild(messageShow)
 };
 
 //Fontion de création des fiches projets // parramètre : projets à afficher
@@ -83,42 +97,21 @@ async function galleryUpdate() {
 
         //Supprime les travaux aux clics
         trashBtn.addEventListener("click", async () => {
-            console.log(showAllProjects[i].id)
-            console.log(localToken)
 
+            console.warn("Elément supprimé")
 
-            // // Envoyer une requête DELETE à l'API pour supprimer l'élément
-            // await fetch("http://localhost:5678/api/works/" + showAllProjects[i].id, {
-            //     method: "DELETE",
-            //     headers: {
-            //         "Authorization": `Bearer ${localToken}`,
-            //         "Content-Type": "application/json"
-            //     }
-            // });
+            // Envoyer une requête DELETE à l'API pour supprimer l'élément
+            await fetch("http://localhost:5678/api/works/" + showAllProjects[i].id, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${localToken}`,
+                    "Content-Type": "application/json"
+                }
+            });
 
             // Supprimer l'élément HTML de la galerie après avoir supprimé l'élément dans l'API
             figure.remove();
-        });
-
-        //Supprime les traux avec la touche entrée
-        trashBtn.addEventListener("keydown", async (event) => {
-            if (event.key === "Enter") {
-                console.log(showAllProjects[i].id)
-                console.log(localToken)
-
-
-                // // Envoyer une requête DELETE à l'API pour supprimer l'élément
-                // await fetch("http://localhost:5678/api/works/" + showAllProjects[i].id, {
-                //     method: "DELETE",
-                //     headers: {
-                //         "Authorization": `Bearer ${localToken}`,
-                //         "Content-Type": "application/json"
-                //     }
-                // });
-
-                // Supprimer l'élément HTML de la galerie après avoir supprimé l'élément dans l'API
-                figure.remove();
-            };
+            initFilterProjects();
         });
     };
 };
@@ -129,22 +122,39 @@ let stopPropagation = (e) => {
 };
 
 ////// Permet de prévisuliser l'image
-let preview = (e) => {
+let preview = () => {
     // e.files contient un objet FileList
+    let imgContainElement = document.querySelectorAll(".jsLoadImgContain");
     let imgContain = document.getElementById("imgUpload")
-    const [picture] = e.files;
-    console.log("test2")
-
-    //Création de la mignature
-    let figure = document.createElement("figure");
-    figure.classList.add("jsLoadFigure");
-    imgContain.appendChild(figure);
-    let imgLoad = document.createElement("img");
-    imgLoad.classList.add("jsLoadImg");
-    figure.appendChild(imgLoad);
+    let fileImg = document.querySelector("#imgUpload input");
+    const [picture] = fileImg.files;
 
     // picture est un objet File
     if (picture) {
+         // Vérifier la taille de l'image
+         if (picture.size > 4 * 1024 * 1024) { // 4 Mo en octets
+            let message = "Veuillez choisir une image de moins de 4 Mo.";
+            console.warn(message)
+             //Réinitlise le fichier chargé et la fenêtre d'ajout d'éléments
+            fileImg.value = "";
+            document.getElementById("category").innerHTML = "<option></option>";
+            closeModal;
+            openModal(modal2);
+            messageErreurModal(message);
+            return;
+        };
+
+        //Création de la mignature
+        let figure = document.createElement("figure");
+        figure.classList.add("jsLoadFigure");
+        imgContain.appendChild(figure);
+        let imgLoad = document.createElement("img");
+        imgLoad.classList.add("jsLoadImg");
+        figure.appendChild(imgLoad);
+        //Cache la fonctionnalité d'ajout de nouvelle image après le chargement d'une image
+        imgContainElement.forEach(element => {
+        element.classList.add("jsLoadImgContainHidden");
+        });
         // change l'URL de l'image
         imgLoad.src = URL.createObjectURL(picture)
     };    
@@ -162,7 +172,6 @@ let changeClass = (e) => {
         try{
             uplaodBtn.classList.remove("uploadBtn");
             uplaodBtn.classList.add("uploadBtnReady");
-            console.log("click")
         } catch (error) {
             console.log(error);
         };
@@ -176,112 +185,96 @@ let changeClass = (e) => {
     };
 };
 
-//Met en forme le conteneur de l'image prévisualisée
-let addImgView = () => {
-    let fileImg = document.querySelector("#imgUpload input");
-    let imgContainElement = document.querySelectorAll(".jsLoadImgContain");
-
-    console.log("test")
-    imgContainElement.forEach(element => {
-        element.classList.add("jsLoadImgContainHidden");
-    });
-
-    preview(fileImg);
-};
-
 let submitFormImg = async (e) => {
     e.preventDefault();
     
-    //message d'erreur en cas de mauvaise soumission du formualire
-    let messageError = document.getElementById("messageError");   
-    //Supprime le message d'erreur précédent en cas de nouvelle tentative échouée
-    if (messageError) {
-        messageError.remove();
-    };
 
     if (document.querySelector("#imgUpload input").value != ""
     && document.getElementById("title").value != ""
     && document.getElementById("category").value != ""
     ) { 
-            // Récupérer les données du formulaire
-            const title = document.getElementById("title").value;
-            const category = document.getElementById("category").value;
-            const fileInput = document.querySelector("#imgUpload input");
+        // Récupérer les données du formulaire
+        const title = document.getElementById("title").value;
+        const category = document.getElementById("category").value;
+        const fileInput = document.querySelector("#imgUpload input");
+        let categoryId;
+        let message;
+    
+        if (category === "Objets") { categoryId = "1" }
+        else if (category === "Appartements") { categoryId = "2" }
+        else if (category === "Hotels & restaurants") { categoryId = "3" };
 
-            // Créer un objet FormData
-            const formData = new FormData();
-            formData.append("title", title);
-            formData.append("category", category);
-            formData.append("image", fileInput.files[0]);
-
-            // Envoyer une requête POST à l'API pour ajouter l'élément
+        // Créer un objet FormData
+        const formData = new FormData();
+        formData.append("image", fileInput.files[0]);
+        formData.append("title", title);
+        formData.append("category", categoryId);
+    
+        // Envoyer une requête POST à l'API pour ajouter l'élément
+        try {
             const localToken = localStorage.getItem("token");
-            try {
-                const response = await fetch("http://localhost:5678/api/works/", {
-                    method: "POST",
-                    headers:{
-                                "Authorization": `Bearer ${localToken}`,
-                                "Content-Type": "application/json"
-                            },
-                    body: formData,
-                });
-                
-                // Vérifier si la requête a réussi
-                if (response.ok) {
-                    console.log("Image ajoutée avec succès !");
-                } else {
-                    console.error("Erreur lors de l'ajout de l'image :", response.statusText);
-                }
-            } catch (error) {
-                console.error("Erreur lors de la requête POST :", error);
+
+            const response = await fetch("http://localhost:5678/api/works/", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${localToken}`
+                },
+                body: formData,
+            });
+            
+            // Vérifier si la requête a réussi
+            if (response.ok) {
+                console.log("Image ajoutée avec succès !");
+                //Recharge la liste de travaux de la page principale
+                initFilterProjects();
+
+                //Réinitialise le formulaire pour rajouter d'autres travaux
+                let imgLoadContent = document.querySelector("#imgUpload figure")
+                //en lève l'image
+                if (imgLoadContent != null) {
+                    closeModal();
+                    openModal(modal2);
+                };
+                //vide le formulaire
+                document.getElementById("category").innerHTML = "<option></option>";
+                document.getElementById("title").value = "";
+
+                //réaffiche le bouton pour prendre un nouveau projet
+                 document.querySelectorAll(".jsLoadImgContain").forEach(element => {
+                    element.classList.remove("jsLoadImgContainHidden");
+                 });
+
+                //Réinitialise la zone de message d'alerte
+                message = "Travaux ajoutés avec succès";
+                messageErreurModal(message);
+            } else {
+                console.error("Erreur lors de l'ajout de l'image :", response.statusText);
+
+                //affiche le message d'erreur sur la page d'ajout des travaux
+                message = `Erreur lors de l'ajout de l'image : ${response.statusText}`
+                messageErreurModal(message);
             }
+        } catch (error) {
+            console.error("Erreur lors de la requête POST :", error);
         }
-        // // Récupération de limage
-        // let imgCharge = document.querySelector("#imgUpload input")
-        // const [pictureLoad] = imgCharge.files;
-        // console.log(pictureLoad)
-
-        // //Création de la charge utile
-        // const uplaodElement = {
-        // image: pictureLoad,
-        // title: document.getElementById("title").value,
-        // category: document.getElementById("category").value,
-        // };
-        // console.log(uplaodElement)
-
-
-        // //Création de la charge utile format JSON
-        // const chargeUplaodElement = JSON.stringify(uplaodElement)
-        // console.log(chargeUplaodElement)
-
-        // const localToken = localStorage.getItem("token");
-        // //Envoyer une requête POST à l'API pour ajouter l'élément
-        // await fetch("http://localhost:5678/api/works/", {
-        //     method: "POST",
-        //     headers:{
-        //                 "Authorization": `Bearer ${localToken}`,
-        //                 "Content-Type": "application/json"
-        //             },
-        //     body: chargeUplaodElement,
-        // });
+    }
     else {
-        console.warn("error")
+        console.warn("Merci de compléter le formulaire correctement")
 
+        //Enleve le message précédent si besoin
+        document.getElementById("divUplaodAlert").innerHTML = "";
         //affiche le message d'erreur sur la page de connexion
-        messageError = document.createElement("span");
-        messageError.setAttribute("id", "messageError")
-        messageError.innerHTML = "Merci de compléter le formulaire correctement"
-        document.getElementById("divUplaodAlert").appendChild(messageError)
+        let messageError = document.createElement("span");
+        messageError.setAttribute("class", "messageError");
+        messageError.innerHTML = "Merci de compléter le formulaire correctement";
+        document.getElementById("divUplaodAlert").appendChild(messageError);
     };
-
-    // Supprimer l'élément HTML de la galerie après avoir supprimé l'élément dans l'API
-    // figure.remove();
 };
 
 async function uploadImg() {
     
     //Listeners sur le changement d'état des l'input d'ajout des images
-    document.querySelector("#imgUpload input").addEventListener("change", addImgView);
+    document.querySelector("#imgUpload input").addEventListener("change", preview);
     document.querySelector("#imgUpload input").addEventListener("change", changeClass);
     document.querySelector("#title").addEventListener("change", changeClass)
     document.querySelector("#category").addEventListener("change", changeClass)
@@ -312,11 +305,7 @@ async function uploadImg() {
 
 //Fonction de fermeture de la modal
 let closeModal = () => {
-
-    console.log("close modal")
-    modalProjects.innerHTML = "";
-
-
+    
     //Change les propriété HTML de la fenêtre modale
     // if (modal.classList === "modalTrue") return;
     modal.classList.remove("modalTrue");
@@ -330,10 +319,11 @@ let closeModal = () => {
     if (modal === modal2) {
         try {
             //Supprime les projets éventuellement laissés sans validation dans la modal2
-            let imgLoad = document.querySelector("#imgUpload figure")
+            let imgLoadContent = document.querySelector("#imgUpload figure")
 
-            if (imgLoad != null) {
-                imgLoad.innerHTML = ""
+            if (imgLoadContent != null) {
+                document.querySelector("#imgUpload input").value = "";
+                imgLoadContent.innerHTML = ""
                 document.getElementById("imgUpload").removeChild(document.querySelector("#imgUpload figure"));
             };
 
@@ -361,6 +351,8 @@ let closeModal = () => {
     
     } else {
         try {
+            //Assure de vider les mignature de la modal à la fermeture
+            modalProjects.innerHTML = "";
             //Supprime les listener de la modal1
             document.getElementById("closeBtn1").removeEventListener("click", closeModal);
             document.getElementById("wrapper1").removeEventListener('click', stopPropagation);
@@ -369,13 +361,10 @@ let closeModal = () => {
             console.log(error);
         }
     };
-
-    console.log("close modal finish")
 };
 
 //Fontion permettant de changer de modal, vérifie la modal chargée la ferme et charge l'autre
 let changeModal = () => {
-    console.log("change modal")
     closeModal();
     if (modal === modal1) {
         openModal(modal2);
@@ -387,14 +376,10 @@ let changeModal = () => {
 //Fonction d'ouverture de la modal
 //Ici "e" correspond à la modal que l'on veut ouvrir et que l'on passe à la fonction closeModal
 function openModal(e) {
-    console.log("open modal")
-    console.log(e)
     if (e === modal1) {
         modal = modal1;
-        console.log("modal = modal 1")
     } else {
         modal = modal2;
-        console.log("modal = modal 2")
         //Si modal2 est chargée, lancer la fonction d'upload
         uploadImg(); 
         //S'assurer que les éléments de imgContain ne soient pas caché.
@@ -454,45 +439,44 @@ function admin() {
     let portfolio = document.getElementById("portFolioTitle");
     let header = document.querySelector("body");
 
-    //Affiche le bouton logout lorsque l'utilisateur est identifié (masque le bouton login)
+    // Affiche le bouton logout lorsque l'utilisateur est identifié (masque le bouton login)
     loginBtn.classList.add("logStatut");
-    loginBtn.setAttribute("aria-hidden", "true")
+    loginBtn.setAttribute("aria-hidden", "true");
     logoutBtn.classList.remove("logStatut");
-    logoutBtn.setAttribute("aria-hidden", "false")
+    logoutBtn.setAttribute("aria-hidden", "false");
 
-    //Assure qu'aucun élément du bandeau n'est chargé
-    if (bandeauAdmin) {
-        bandeauAdmin.remove();
-    }
+    // Assure qu'aucun élément du bandeau n'est chargé
+    if (!bandeauAdmin) {
+        // Si bandeauAdmin n'existe pas, le crée
+        bandeauAdmin = document.createElement("div");
+        bandeauAdmin.setAttribute("id", "bandeauAdmin");
+        bandeauAdmin.innerHTML = "<span class=\"fa-solid fa-pen-to-square\"></span><span>Mode édition</span>";
+        let parentBandeauHeader = header.parentNode;
+        parentBandeauHeader.insertBefore(bandeauAdmin, header);
+    };
 
-    //affiche le bandeau Admin lorque l'utilisateur est logé
-    bandeauAdmin = document.createElement("div");
-    bandeauAdmin.setAttribute("id", "admin");
-    bandeauAdmin.innerHTML = "<span class=\"fa-solid fa-pen-to-square\"></span><span>Mode édition</span>";
-    let parentBandeauHeader = header.parentNode;
-    parentBandeauHeader.insertBefore(bandeauAdmin, header);
+    // Assure que modifBtn n'existe pas
+    if (!modifBtn) {
+        // Si modifBtn n'existe pas, le crée
+        modifBtn = document.createElement("div");
+        modifBtn.setAttribute("id", "modifBtn");
+        modifBtn.setAttribute("tabindex", "2");
+        modifBtn.innerHTML = "<span class=\"fa-solid fa-pen-to-square\"></span><span> Modifier</span>";
+        portfolio.appendChild(modifBtn);
 
-    //affiche le bouton de modification lorque l'utilisateur est logé
-    modifBtn = document.createElement("div");
-    modifBtn.setAttribute("id", "modifPortfolio");
-    modifBtn.setAttribute("tabindex", "2");
-    modifBtn.innerHTML = "<span class=\"fa-solid fa-pen-to-square\"></span><span> Modifier</span>";
-    portfolio.appendChild(modifBtn);
+        // Affiche la modal au click ou lors de l'appui sur Enter et lance la fonction de la modification de la galerie
+        modifBtn.addEventListener("click", () => {
+            openModal(modal1);
+        });
 
-    //Affiche la modal au click ou lors de l'appui sur Enter et lance la fonction de la modification de la galerie
-    modifBtn.addEventListener("click", () => {
-        console.log("afficher la fenêtre de modification des projets au click")
-        openModal(modal1);
-    });
+        modifBtn.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                openModal(modal1);
+            };
+        });
+    };
 
-    modifBtn.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            console.log("afficher la fenêtre de modification des projets avec entrée")
-            openModal(modal1);;
-        };
-    });
 };
-
 //Fonction qui vérifie que l'utilisateur est bien autentifié
 function userAuth() {
     // Récupération du token depuis l'URL
@@ -556,13 +540,14 @@ function login() {
 };
 
 //////////////////////////////Fonctions pour l'affichages du site de base//////////////////////////////
-// Récupération de la liste sur l'API
+// Récupération de les projets sur l'API, les affiches et créer les filtres
 async function initFilterProjects () {
 try {
         const allProjects = await fetch("http://localhost:5678/api/works/");
         const showAllProjects = await allProjects.json();
     
         let selectorMenu = document.querySelector(".selectorMenu");
+        selectorMenu.innerHTML = "";
 
         //Création de la liste des boutons, récupération des élément dans allProjects.json "category.name"
         //le "Set" permet d'éviter les doublons
