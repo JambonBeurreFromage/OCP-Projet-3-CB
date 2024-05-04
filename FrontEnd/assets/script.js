@@ -187,19 +187,30 @@ let changeClass = (e) => {
 
 let submitFormImg = async (e) => {
     e.preventDefault();
+
+    // Récupérer les données du formulaire
+    const title = document.getElementById("title").value;
+    const category = document.getElementById("category").value;
+    const fileInput = document.querySelector("#imgUpload input");
+    let message;
+
+
+    const titleRegex = /^[a-zA-Z\s-]*$/;
+    if (!titleRegex.test(title)) {
+        console.warn("Le titre doit contenir uniquement des lettres, des espaces et le symbole '-'.");
+        // Affiche un message d'erreur
+        message = "Le titre doit contenir uniquement des lettres, des espaces et le symbole '-'."
+        messageErreurModal(message);
+        return; // Arrête la fonction si la validation échoue
+    }
     
 
-    if (document.querySelector("#imgUpload input").value != ""
-    && document.getElementById("title").value != ""
-    && document.getElementById("category").value != ""
+    if (fileInput.value != ""
+    && title.value != ""
+    && category.value != ""
     ) { 
-        // Récupérer les données du formulaire
-        const title = document.getElementById("title").value;
-        const category = document.getElementById("category").value;
-        const fileInput = document.querySelector("#imgUpload input");
+        //Permet d'attribuer une ID catégorie au objet
         let categoryId;
-        let message;
-    
         if (category === "Objets") { categoryId = "1" }
         else if (category === "Appartements") { categoryId = "2" }
         else if (category === "Hotels & restaurants") { categoryId = "3" };
