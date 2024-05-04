@@ -279,6 +279,10 @@ li:hover {
 	cursor: pointer;
 }
 
+.uploadForm {
+	width: 500px;
+}
+
 .uploadForm h2 {
 	color: black;
 }
